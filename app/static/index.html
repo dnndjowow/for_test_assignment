@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="color-scheme" content="light">
+  <meta name="description" content="Подготовка черновиков карточек измерительных приборов по исходным данным.">
+  <title>Карточки приборов</title>
+  <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="/static/style.css">
+  <script src="/static/app.js" defer></script>
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="/" aria-label="Карточки приборов — главная">
+      <svg viewBox="0 0 32 32" fill="none" aria-hidden="true"><rect x="4" y="4" width="24" height="24" rx="6" stroke="currentColor" stroke-width="2"/><path d="M10 11h12M10 16h8M10 21h10" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      <span>Карточки приборов</span>
+    </a>
+    <span class="topbar-note">Рабочее место контент-менеджера</span>
+  </header>
+
+  <main>
+    <div class="intro">
+      <span class="eyebrow">B2B-КАТАЛОГ</span>
+      <h1>От характеристик к карточке товара</h1>
+      <p>Добавь сведения о приборе. Получи описание, поисковые запросы и заметку для менеджера.</p>
+    </div>
+
+    <div class="workspace">
+      <section class="panel input-panel" aria-labelledby="input-heading">
+        <div class="panel-heading"><span class="step">01</span><h2 id="input-heading">Исходные данные</h2></div>
+        <p class="muted">Вставь JSON или начни с одного из примеров.</p>
+
+        <div class="examples" role="group" aria-label="Демонстрационные товары">
+          <button class="example-button" data-example="manometer" type="button">Манометр <span>демо</span></button>
+          <button class="example-button" data-example="thermometer" type="button">Термометр <span>демо</span></button>
+        </div>
+        <p class="demo-note" id="demo-note" hidden>Условный товар и характеристики для демонстрации.</p>
+
+        <form id="product-form">
+          <div class="editor-label">
+            <label for="product-json">Данные о приборе</label>
+            <button id="upload-button" class="file-button" type="button">Загрузить .json</button>
+            <input id="json-file" type="file" accept=".json,application/json" class="visually-hidden" tabindex="-1">
+          </div>
+          <textarea id="product-json" spellcheck="false" autocomplete="off" aria-describedby="input-help" required placeholder='{
+  "name": "Название прибора",
+  "manufacturer": "Производитель",
+  "specs": {
+    "Диапазон измерений": "значение",
+    "Интерфейс": null
+  },
+  "description": "Назначение или текст паспорта"
+}'></textarea>
+          <p id="input-help" class="help-text">Для неизвестного значения укажи <code>null</code>. Пропуски будут отмечены в результате.</p>
+          <details class="format-help">
+            <summary>Какие поля нужны</summary>
+            <p><code>name</code> — название. <code>manufacturer</code> — производитель. <code>specs</code> — характеристики со значениями и единицами. <code>description</code> — назначение или фрагмент паспорта.</p>
+            <p>Нужно название и хотя бы описание или заполненная характеристика. Загружай текст, а не PDF-файл.</p>
+          </details>
+
+          <div id="error-box" class="notice error" role="alert" hidden></div>
+          <button id="generate-button" class="primary-button" type="submit"><span id="generate-label">Подготовить карточку</span><span class="spinner" id="spinner" hidden></span><span id="generate-arrow" aria-hidden="true">→</span></button>
+          <button id="preview-button" class="preview-button" type="button" disabled>Посмотреть сохранённый образец</button>
+        </form>
+        <div class="input-footer">Технические значения берутся из исходных данных.</div>
+      </section>
+
+      <section class="panel result-panel" aria-labelledby="result-heading" aria-busy="false">
+        <div class="result-heading-row">
+          <div class="panel-heading"><span class="step">02</span><h2 id="result-heading">Черновик карточки</h2></div>
+          <span id="result-status" class="status" hidden></span>
+        </div>
+
+        <div id="empty-state" class="empty-state">
+          <div class="empty-icon" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none"><path d="M13 7h16l8 8v26H13V7Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M29 7v9h8M20 24h10M20 30h10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg></div>
+          <h3>Здесь появится карточка</h3>
+          <p>SEO-текст, характеристики и поисковые запросы<br>в удобном для копирования виде.</p>
+          <div class="empty-tags"><span>Заголовок ≤ 70</span><span>Описание 800–1200</span><span>3–5 запросов</span></div>
+        </div>
+
+        <div id="loading-state" class="loading-state" role="status" hidden>
+          <div class="loading-bars" aria-hidden="true"><i></i><i></i><i></i></div>
+          <h3>Готовим черновик</h3><p>После ответа модели проверим формат, длину и технические значения.</p>
+        </div>
+
+        <div id="result-content" hidden>
+          <div id="sample-notice" class="notice sample-notice" hidden>Сохранённый демонстрационный образец, подготовленный вручную. Для нового текста используй кнопку «Подготовить карточку».</div>
+          <div id="warnings-box" class="notice warning" hidden></div>
+          <div id="missing-box" class="missing-box" hidden></div>
+          <div id="card-content" hidden>
+            <div class="result-tabs" role="tablist" aria-label="Вид результата">
+              <button id="card-tab" role="tab" type="button" aria-selected="true" aria-controls="card-view" tabindex="0">Карточка</button>
+              <button id="json-tab" role="tab" type="button" aria-selected="false" aria-controls="json-view" tabindex="-1">JSON</button>
+            </div>
+            <div id="card-view" role="tabpanel" aria-labelledby="card-tab">
+              <div class="result-section"><div class="section-label"><h3>SEO-заголовок</h3><span id="title-count"></span></div><p id="seo-title" class="seo-title"></p></div>
+              <div class="result-section"><div class="section-label"><h3>SEO-описание</h3><span id="description-count"></span></div><p id="seo-description" class="description-text"></p></div>
+              <div class="result-section"><div class="section-label"><h3>Ключевые характеристики</h3><span class="source-label">из исходных данных</span></div><div class="table-wrap"><table><caption class="visually-hidden">Характеристики прибора</caption><tbody id="characteristics"></tbody></table></div></div>
+              <div class="result-section"><div class="section-label"><h3>Поисковые запросы</h3><span id="queries-count"></span></div><ul id="search-queries" class="query-list"></ul><p class="help-text">Предложения для оптимизации; частотность не проверялась.</p></div>
+              <div class="manager-block"><h3>Для менеджера</h3><p id="commercial-block"></p></div>
+            </div>
+            <div id="json-view" role="tabpanel" aria-labelledby="json-tab" hidden><pre id="result-json"></pre></div>
+            <div class="export-buttons"><button id="copy-button" class="secondary-button" type="button">Скопировать Markdown</button><button id="download-button" class="secondary-button" type="button">Скачать JSON ↓</button></div>
+            <p class="result-footer">Перед публикацией проверь формулировки и исходные документы.</p>
+          </div>
+        </div>
+      </section>
+    </div>
+    <footer class="page-footer"><span>Карточки измерительных приборов</span><span>Локальный прототип · OpenRouter</span></footer>
+  </main>
+  <div id="toast" class="toast" role="status" hidden></div>
+</body>
+</html>

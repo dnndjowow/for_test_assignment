@@ -1,0 +1,77 @@
+{
+  "checked_on": "2026-11-07",
+  "model": "nvidia/nemotron-3.5-super-vl:free",
+  "reasoning_enabled": false,
+  "products": [
+    {
+      "product": "manometer",
+      "status": "ready",
+      "checks": {
+        "title_length": 52,
+        "description_length": 862,
+        "query_count": 4,
+        "passed": true
+      },
+      "generation_attempts": 2,
+      "missing_fields": []
+    },
+    {
+      "product": "thermometer",
+      "status": "needs_review",
+      "checks": {
+        "title_length": 42,
+        "description_length": 872,
+        "query_count": 3,
+        "passed": true
+      },
+      "generation_attempts": 2,
+      "missing_fields": [
+        "Тип подключаемого датчика",
+        "Интерфейс передачи данных",
+        "Степень защиты корпуса"
+      ]
+    }
+  ],
+  "responses": [
+    {
+      "product": "manometer",
+      "provider": "Nvidia",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "finish_reason": "stop",
+      "content_chars": 1376,
+      "completion_tokens": 434,
+      "reasoning_tokens": 0,
+      "cost": 0
+    },
+    {
+      "product": "manometer",
+      "provider": "Nvidia",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "finish_reason": "stop",
+      "content_chars": 1483,
+      "completion_tokens": 469,
+      "reasoning_tokens": 0,
+      "cost": 0
+    },
+    {
+      "product": "thermometer",
+      "provider": "Nvidia",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "finish_reason": "stop",
+      "content_chars": 1091,
+      "completion_tokens": 389,
+      "reasoning_tokens": 0,
+      "cost": 0
+    },
+    {
+      "product": "thermometer",
+      "provider": "Nvidia",
+      "model": "nvidia/nemotron-3.5-super-vl:free",
+      "finish_reason": "stop",
+      "content_chars": 1393,
+      "completion_tokens": 472,
+      "reasoning_tokens": 0,
+      "cost": 0
+    }
+  ]
+}
